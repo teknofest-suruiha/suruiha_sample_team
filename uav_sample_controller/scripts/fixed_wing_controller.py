@@ -7,7 +7,7 @@ import rospy
 from geometry_msgs.msg import Twist, Pose
 from suruiha_gazebo_plugins.srv import AirTraffic
 from uav_sample_controller.air_traffic_manager import AirTrafficManager
-from uav_sample_controller.zephyr_controller import UAVController
+from uav_sample_controller.zephyr_controller import ZephyrController
 from uav_sample_controller.task_planner import TaskPlanner
 from uav_sample_controller.comm_manager import CommManager
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     rospy.logdebug("topic names are set as pose_topic_name:" + pose_topic_name + " control_topic_name:" + control_topic_name)
     control_pub = rospy.Publisher(control_topic_name, Twist, queue_size=1)
 
-    uav_controller = UAVController(control_pub, air_manager)
+    uav_controller = ZephyrController(control_pub, air_manager)
     rospy.Subscriber(pose_topic_name, Pose, uav_controller.pose_callback)
 
     task_planner = TaskPlanner(uav_controller)

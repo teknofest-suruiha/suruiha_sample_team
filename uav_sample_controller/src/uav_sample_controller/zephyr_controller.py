@@ -4,7 +4,7 @@ from geometry_msgs.msg import Twist, Pose
 from uav_sample_controller.util import clamp, distance, to_euler, normalize_angle
 import math
 
-class UAVController:
+class ZephyrController:
     def __init__(self, control_publisher, air_manager):
         self.control_publisher = control_publisher
         self.air_manager = air_manager
