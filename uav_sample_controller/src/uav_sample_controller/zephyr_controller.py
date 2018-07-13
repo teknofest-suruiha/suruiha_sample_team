@@ -36,6 +36,7 @@ class ZephyrController:
         completed = self.air_manager.takeoff_request()
         # now it is time to takeoff and be onair
         if completed:
+            print('takeoff request is completed')
             # print('last.height:' + str(self.last_uav_pose.position.z))
             twist_cmd = Twist()
             # checking whether takeoff completed
@@ -143,6 +144,9 @@ class ZephyrController:
         twist_cmd.angular.x = 0
         twist_cmd.angular.y = 0
         self.control_publisher.publish(twist_cmd)
+
+    def get_latest_pose(self):
+        return self.last_uav_pose
 
     # @staticmethod
     # def get_current_time():

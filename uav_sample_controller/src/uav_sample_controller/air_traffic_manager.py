@@ -68,7 +68,7 @@ class AirTrafficManager:
             # print('waiting to takeoff')
             response = self.air_traffic_service(self.uav_name, STATUS)
             if response.result == READY_TO_TAKEOFF:
-                # print('ready to takeoff')
+                print('ready to takeoff')
                 self.status = TAKEOFF
                 return False
         elif self.status == TAKEOFF:

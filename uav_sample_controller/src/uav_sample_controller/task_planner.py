@@ -21,7 +21,7 @@ class TaskPlanner:
                 self.status = WAYPOINTS
                 self.waypoint_counter = 0
         elif self.status == WAYPOINTS:
-            # print('task planner waypoints')
+            print('task planner waypoints')
             way_point = self.way_points[self.waypoint_counter]
             completed = self.controller.goto_position(way_point[0], way_point[1], way_point[2], 400)
             if completed:

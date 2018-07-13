@@ -6,13 +6,14 @@ import rospy
 
 from geometry_msgs.msg import Twist, Pose
 from suruiha_gazebo_plugins.srv import AirTraffic
+from suruiha_gazebo_plugins.msg import UAVMessage
 from uav_sample_controller.air_traffic_manager import AirTrafficManager
 from uav_sample_controller.zephyr_controller import ZephyrController
 from uav_sample_controller.task_planner import TaskPlanner
 from uav_sample_controller.comm_manager import CommManager
 
 if __name__ == "__main__":
-    rospy.init_node('uav_controller', anonymous=True)
+    rospy.init_node('fixed_wing_controller', anonymous=True)
     uav_name = rospy.get_param('~name')
 
     # connect to air traffic controller
@@ -22,17 +23,18 @@ if __name__ == "__main__":
     air_traffic_service = rospy.ServiceProxy('/air_traffic_control', AirTraffic)
     air_manager = AirTrafficManager(air_traffic_service, uav_name)
 
-    comm_manager = CommManager()
-
     pose_topic_name = rospy.get_param('~pose')
     control_topic_name = rospy.get_param('~control')
     rospy.logdebug("topic names are set as pose_topic_name:" + pose_topic_name + " control_topic_name:" + control_topic_name)
     control_pub = rospy.Publisher(control_topic_name, Twist, queue_size=1)
 
-    uav_controller = ZephyrController(control_pub, air_manager)
-    rospy.Subscriber(pose_topic_name, Pose, uav_controller.pose_callback)
+    zephyr_controller = ZephyrController(control_pub, air_manager)
+    rospy.Subscriber(pose_topic_name, Pose, zephyr_controller.pose_callback)
 
-    task_planner = TaskPlanner(uav_controller)
+    comm_manager = CommManager(rospy, uav_name, zephyr_controller)
+
+
+    task_planner = TaskPlanner(zephyr_controller)
 
     # how many times in a second the control loop is going to run
     ros_rate = rospy.Rate(20)
@@ -40,6 +42,9 @@ if __name__ == "__main__":
         # air_manager.step()
         # comm_manager.step()
         task_planner.step()
+
+        # share the latest pose of the uav with other uavs
+        comm_manager.publish_pose()
         # uav_controller.step()
         ros_rate.sleep()
 
