@@ -5,7 +5,9 @@ from catkin_pkg.python_setup import generate_distutils_setup
 
 # fetch values from package.xml
 setup_args = generate_distutils_setup(
-    scripts=['scripts/fixed_wing_controller.py'],
+    scripts=['scripts/fixed_wing_controller.py',\
+    'scripts/quadrotor_controller.py',\
+    'scripts/keyboard_controller.py'],
     packages=['uav_sample_controller'],
     package_dir={'': 'src'})
 

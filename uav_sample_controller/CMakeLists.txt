@@ -164,6 +164,7 @@ include_directories(
 install(PROGRAMS
    scripts/fixed_wing_controller.py
    scripts/quadrotor_controller.py
+   scripts/keyboard_controller.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
