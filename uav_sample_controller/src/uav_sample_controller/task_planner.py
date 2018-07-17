@@ -6,8 +6,9 @@ IDLE = 'IDLE'
 
 class TaskPlanner:
 
-    def __init__(self, uav_controller):
+    def __init__(self, uav_controller, sensor_manager):
         self.controller = uav_controller
+        self.sensor_manager = sensor_manager
         self.status = TAKEOFF
 
         self.waypoint_counter = 0

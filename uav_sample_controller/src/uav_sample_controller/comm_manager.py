@@ -4,6 +4,7 @@ from geometry_msgs.msg import Pose
 # MESSAGE TYPES
 POSE_MSG = 0
 
+
 class CommManager:
     def __init__(self, rospy, uav_name, uav_controller):
         self.uav_name = uav_name

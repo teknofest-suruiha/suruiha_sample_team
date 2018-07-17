@@ -7,10 +7,13 @@ import rospy
 from geometry_msgs.msg import Twist, Pose
 from suruiha_gazebo_plugins.srv import AirTraffic
 from suruiha_gazebo_plugins.msg import UAVMessage
+from suruiha_gazebo_plugins.msg import UAVSensorMessage
 from uav_sample_controller.air_traffic_manager import AirTrafficManager
 from uav_sample_controller.zephyr_controller import ZephyrController
 from uav_sample_controller.task_planner import TaskPlanner
 from uav_sample_controller.comm_manager import CommManager
+from uav_sample_controller.sensor_manager import SensorManager
+
 
 if __name__ == "__main__":
     rospy.init_node('fixed_wing_controller', anonymous=True)
@@ -32,9 +35,9 @@ if __name__ == "__main__":
     rospy.Subscriber(pose_topic_name, Pose, zephyr_controller.pose_callback)
 
     comm_manager = CommManager(rospy, uav_name, zephyr_controller)
+    sensor_manager = SensorManager(rospy)
 
-
-    task_planner = TaskPlanner(zephyr_controller)
+    task_planner = TaskPlanner(zephyr_controller, sensor_manager)
 
     # how many times in a second the control loop is going to run
     ros_rate = rospy.Rate(20)
