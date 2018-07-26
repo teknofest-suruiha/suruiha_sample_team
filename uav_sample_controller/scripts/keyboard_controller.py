@@ -5,6 +5,7 @@ import sys, select, termios, tty
 from geometry_msgs.msg import Twist
 from suruiha_gazebo_plugins.srv import AirTraffic
 from uav_sample_controller.air_traffic_manager import AirTrafficManager
+import math
 
 
 roslib.load_manifest('uav_sample_controller')
@@ -74,6 +75,7 @@ if __name__ == "__main__":
             control_cmd.linear.x = throttle  # for zephyr fixeed wing
             control_cmd.angular.y = pitch
             control_cmd.angular.x = roll
+            control_cmd.angular.z = math.pi
             control_pub.publish(control_cmd)
         else:
             print('unknown state:' + state)

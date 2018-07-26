@@ -37,7 +37,7 @@ if __name__ == "__main__":
     comm_manager = CommManager(rospy, uav_name, zephyr_controller)
     sensor_manager = SensorManager(rospy)
 
-    task_planner = TaskPlanner(zephyr_controller, sensor_manager)
+    task_planner = TaskPlanner(zephyr_controller, sensor_manager, uav_name)
 
     # how many times in a second the control loop is going to run
     ros_rate = rospy.Rate(20)
