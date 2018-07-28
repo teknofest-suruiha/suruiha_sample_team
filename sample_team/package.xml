@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>uav_sample_controller</name>
+  <name>sample_team</name>
   <version>0.0.0</version>
-  <description>The uav_sample_controller package</description>
+  <description>The sample_team package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

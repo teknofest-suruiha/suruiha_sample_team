@@ -1,16 +1,18 @@
 from suruiha_gazebo_plugins.msg import UAVMessage
 from geometry_msgs.msg import Pose
+import rospy
 
 # MESSAGE TYPES
 POSE_MSG = 0
 
 
 class CommManager:
-    def __init__(self, rospy, uav_name, uav_controller):
+    def __init__(self, uav_name, uav_controller):
         self.uav_name = uav_name
         self.msg_publisher = rospy.Publisher('comm_request', UAVMessage, queue_size=10)
         rospy.Subscriber('comm_' + self.uav_name, UAVMessage, self.message_received)
         self.uav_controller = uav_controller
+        self.teammate_poses = {}
 
     def message_received(self, msg):
         msg_data_fields = msg.msg.split(' ')
@@ -24,7 +26,7 @@ class CommManager:
             pose.orientation.y = float(msg_data_fields[5])
             pose.orientation.z = float(msg_data_fields[6])
             pose.orientation.w = float(msg_data_fields[7])
-            # now process the message
+            self.teammate_poses[msg.sender] = pose
         else:
             print('Unknown message type:' + str(msg_type))
 

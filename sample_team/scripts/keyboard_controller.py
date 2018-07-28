@@ -4,11 +4,11 @@ import rospy
 import sys, select, termios, tty
 from geometry_msgs.msg import Twist
 from suruiha_gazebo_plugins.srv import AirTraffic
-from uav_sample_controller.air_traffic_manager import AirTrafficManager
+from sample_team.air_traffic_manager import AirTrafficManager
 import math
 
 
-roslib.load_manifest('uav_sample_controller')
+roslib.load_manifest('sample_team')
 settings = termios.tcgetattr(sys.stdin)
 
 

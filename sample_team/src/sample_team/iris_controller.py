@@ -1,13 +1,12 @@
 import time
-# from uav_sample_controller.air_traffic_manager import TAKEOFF, ONAIR
 from geometry_msgs.msg import Twist, Pose
-from uav_sample_controller.util import clamp, distance, to_euler, normalize_angle
+from sample_team.util import clamp, distance, to_euler, normalize_angle
 import math
+import rospy
 
 
 class IrisController:
-    def __init__(self, control_publisher, air_manager):
-        self.control_publisher = control_publisher
+    def __init__(self, uav_name, air_manager):
         self.air_manager = air_manager
         # self.step_frequency = 100
         # self.last_time = self.get_current_time()
@@ -29,6 +28,9 @@ class IrisController:
         self.x_speed = 0
         self.y_speed = 0
         self.height_speed = 0
+
+        self.control_pub = rospy.Publisher(uav_name + '_control', Twist, queue_size=1)
+        self.pose_pub = rospy.Subscriber(uav_name + '_pose', Pose, self.pose_callback)
 
     def pose_callback(self, pose):
         self.x_speed = pose.position.x - self.last_uav_pose.position.x
@@ -59,7 +61,7 @@ class IrisController:
             twist_cmd.angular.x = 0
             twist_cmd.angular.y = 0
             twist_cmd.angular.z = math.pi
-            self.control_publisher.publish(twist_cmd)
+            self.control_pub.publish(twist_cmd)
             # checking whether takeoff completed
             if self.last_uav_pose.position.z >= height:
                 return True
@@ -119,7 +121,7 @@ class IrisController:
         self.last_height_error = height_error
 
         print('x_error:' + str(x_error) + ' y_error:' + str(y_error) + ' height_error:' + str(height_error))
-        self.control_publisher.publish(twist_cmd)
+        self.control_pub.publish(twist_cmd)
         return False
 
     def land(self):
@@ -149,7 +151,7 @@ class IrisController:
                 # twist_cmd.linear.x = throttle
                 # twist_cmd.angular.x = 0
                 # twist_cmd.angular.y = 0
-                # self.control_publisher.publish(twist_cmd)
+                # self.control_publish.publish(twist_cmd)
                 # if self.last_uav_pose.position.z == 0:
                 #     self.landing_state = 'MOVE_TO_LANDING_START'
                 #     print('landing completed')
@@ -180,7 +182,7 @@ class IrisController:
         twist_cmd = Twist()
         # no throttle
         twist_cmd.linear.z = 0
-        self.control_publisher.publish(twist_cmd)
+        self.control_pub.publish(twist_cmd)
 
     def get_latest_pose(self):
         return self.last_uav_pose

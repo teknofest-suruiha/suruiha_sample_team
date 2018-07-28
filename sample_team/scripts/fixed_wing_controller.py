@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 import roslib
 
-roslib.load_manifest('uav_sample_controller')
+roslib.load_manifest('sample_team')
 import rospy
 
 from geometry_msgs.msg import Twist, Pose
 from suruiha_gazebo_plugins.srv import AirTraffic
 from suruiha_gazebo_plugins.msg import UAVMessage
 from suruiha_gazebo_plugins.msg import UAVSensorMessage
-from uav_sample_controller.air_traffic_manager import AirTrafficManager
-from uav_sample_controller.zephyr_controller import ZephyrController
-from uav_sample_controller.task_planner import TaskPlanner
-from uav_sample_controller.comm_manager import CommManager
-from uav_sample_controller.sensor_manager import SensorManager
+from sample_team.air_traffic_manager import AirTrafficManager
+from sample_team.zephyr_controller import ZephyrController
+from sample_team.task_planner import TaskPlanner
+from sample_team.comm_manager import CommManager
+from sample_team.sensor_manager import SensorManager
 
 
 if __name__ == "__main__":
@@ -20,22 +20,12 @@ if __name__ == "__main__":
     uav_name = rospy.get_param('~name')
 
     # connect to air traffic controller
-    rospy.logdebug('waiting for /air_traffic_control service')
-    rospy.wait_for_service('/air_traffic_control')
-    rospy.logdebug('/air_traffic_control service is ready')
-    air_traffic_service = rospy.ServiceProxy('/air_traffic_control', AirTraffic)
-    air_manager = AirTrafficManager(air_traffic_service, uav_name)
+    air_manager = AirTrafficManager(uav_name)
 
-    pose_topic_name = rospy.get_param('~pose')
-    control_topic_name = rospy.get_param('~control')
-    rospy.logdebug("topic names are set as pose_topic_name:" + pose_topic_name + " control_topic_name:" + control_topic_name)
-    control_pub = rospy.Publisher(control_topic_name, Twist, queue_size=1)
+    zephyr_controller = ZephyrController(uav_name, air_manager)
 
-    zephyr_controller = ZephyrController(control_pub, air_manager)
-    rospy.Subscriber(pose_topic_name, Pose, zephyr_controller.pose_callback)
-
-    comm_manager = CommManager(rospy, uav_name, zephyr_controller)
-    sensor_manager = SensorManager(rospy)
+    comm_manager = CommManager(uav_name, zephyr_controller)
+    sensor_manager = SensorManager(uav_name)
 
     task_planner = TaskPlanner(zephyr_controller, sensor_manager, uav_name)
 

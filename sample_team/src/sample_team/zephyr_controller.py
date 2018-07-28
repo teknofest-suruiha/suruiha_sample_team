@@ -1,13 +1,13 @@
 import time
 # from uav_sample_controller.air_traffic_manager import TAKEOFF, ONAIR
 from geometry_msgs.msg import Twist, Pose
-from uav_sample_controller.util import clamp, distance, to_euler, normalize_angle
+from sample_team.util import clamp, distance, to_euler, normalize_angle
 import math
+import rospy
 
 
 class ZephyrController:
-    def __init__(self, control_publisher, air_manager):
-        self.control_publisher = control_publisher
+    def __init__(self, uav_name, air_manager):
         self.air_manager = air_manager
         # self.step_frequency = 100
         # self.last_time = self.get_current_time()
@@ -17,6 +17,9 @@ class ZephyrController:
         self.landing_end_pose = None
 
         self.landing_state = 'MOVE_TO_LANDING_START'
+
+        self.control_pub = rospy.Publisher(uav_name + '_control', Twist, queue_size=1)
+        self.pose_pub = rospy.Subscriber(uav_name + '_pose', Pose, self.pose_callback)
 
     def pose_callback(self, pose):
         self.last_uav_pose = pose
@@ -45,7 +48,7 @@ class ZephyrController:
                 twist_cmd.linear.x = 400
                 twist_cmd.angular.x = 0
                 twist_cmd.angular.y = 0
-                self.control_publisher.publish(twist_cmd)
+                self.control_pub.publish(twist_cmd)
                 return True
 
             if self.last_uav_pose.position.z < 1:
@@ -56,7 +59,7 @@ class ZephyrController:
                 twist_cmd.linear.x = 450
                 twist_cmd.angular.x = 0
                 twist_cmd.angular.y = -0.3
-            self.control_publisher.publish(twist_cmd)
+            self.control_pub.publish(twist_cmd)
             return False
         else:
             return False
@@ -85,7 +88,7 @@ class ZephyrController:
 
         height_error = z - self.last_uav_pose.position.z
         twist_cmd.angular.y =  clamp(-height_error/10, -0.4, 0.4)
-        self.control_publisher.publish(twist_cmd)
+        self.control_pub.publish(twist_cmd)
         return False
 
     def loiter(self, radius, height):
@@ -94,7 +97,7 @@ class ZephyrController:
         height_error = height - self.last_uav_pose.position.z
         twist_cmd.angular.y = -height_error/10
         twist_cmd.angular.x = 0.2
-        self.control_publisher.publish(twist_cmd)
+        self.control_pub.publish(twist_cmd)
 
     def land(self):
         completed = self.air_manager.landing_request()
@@ -122,7 +125,7 @@ class ZephyrController:
                 # twist_cmd.linear.x = throttle
                 # twist_cmd.angular.x = 0
                 # twist_cmd.angular.y = 0
-                # self.control_publisher.publish(twist_cmd)
+                # self.control_pub.publish(twist_cmd)
                 # if self.last_uav_pose.position.z == 0:
                 #     self.landing_state = 'MOVE_TO_LANDING_START'
                 #     print('landing completed')
@@ -138,13 +141,12 @@ class ZephyrController:
 
         return False
 
-
     def stop_motors(self):
         twist_cmd = Twist()
         twist_cmd.linear.x = 0
         twist_cmd.angular.x = 0
         twist_cmd.angular.y = 0
-        self.control_publisher.publish(twist_cmd)
+        self.control_pub.publish(twist_cmd)
 
     def get_latest_pose(self):
         return self.last_uav_pose

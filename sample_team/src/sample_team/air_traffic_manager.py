@@ -1,4 +1,6 @@
 import time
+import rospy
+from suruiha_gazebo_plugins.srv import AirTraffic
 
 # air traffic message constants
 STATUS = "STATUS"
@@ -22,35 +24,15 @@ TAKEOFF = 'TAKEOFF'
 
 
 class AirTrafficManager:
-    def __init__(self, air_traffic_service, uav_name):
-        self.air_traffic_service = air_traffic_service
+    def __init__(self, uav_name):
         self.uav_name = uav_name
-        # it will poll the air traffic manager at every step frequency milliseconds
-        # self.step_frequency = 100
-        # self.last_time = self.get_current_time()
-        self.status = IDLE
 
-    # def step(self):
-    #     elapsed_time = self.get_current_time()-self.last_time
-    #     if elapsed_time > self.step_frequency:
-    #         self.last_time = self.get_current_time()
-    #         if self.status == WAITING_AIR_TRAFFIC:
-    #             response = self.air_traffic_service(self.uav_name, TAKEOFF_REQUEST)
-    #             print('air_traffic_service response:' + response.result)
-    #             if response.result == ALLOCATED_TO_TAKEOFF:
-    #                 self.status = WAITING_TO_TAKEOFF
-    #         elif self.status == WAITING_TO_TAKEOFF:
-    #             response = self.air_traffic_service(self.uav_name, STATUS)
-    #             if response.result == READY_TO_TAKEOFF:
-    #                 self.status = TAKEOFF
-    #         elif self.status == TAKEOFF:
-    #             pass
-    #             # wait uav controller to takeoff the uav
-    #         elif self.status == ONAIR:
-    #             pass
-    #             # the uav is completed take off operation
-    #         else:
-    #             print('unkown status:' + self.status)
+        # connect to air traffic controller
+        rospy.logdebug('waiting for /air_traffic_control service')
+        rospy.wait_for_service('/air_traffic_control')
+        self.air_traffic_service = rospy.ServiceProxy('/air_traffic_control', AirTraffic)
+
+        self.status = IDLE
 
     def takeoff_request(self):
         if self.status == IDLE:
@@ -111,11 +93,6 @@ class AirTrafficManager:
             print('landing pose msg is corrupted:' + response.result)
 
         return starting_pose, ending_pose
-
-    # @staticmethod
-    # def get_current_time():
-    #     # returns time in milliseconds
-    #     return time.time()*1000
 
 
 

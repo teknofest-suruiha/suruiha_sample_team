@@ -4,6 +4,7 @@ WAYPOINTS = 'WAYPOINTS'
 LAND = 'LAND'
 IDLE = 'IDLE'
 
+
 class TaskPlanner:
 
     def __init__(self, uav_controller, sensor_manager, uav_name):
