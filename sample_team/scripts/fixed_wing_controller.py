@@ -13,6 +13,7 @@ from sample_team.zephyr_controller import ZephyrController
 from sample_team.task_planner import TaskPlanner
 from sample_team.comm_manager import CommManager
 from sample_team.sensor_manager import SensorManager
+from sample_team.terrorist_detector import TerroristDetector
 
 
 if __name__ == "__main__":
@@ -26,6 +27,7 @@ if __name__ == "__main__":
 
     comm_manager = CommManager(uav_name, zephyr_controller)
     sensor_manager = SensorManager(uav_name)
+    terrorist_detector = TerroristDetector(sensor_manager)
 
     task_planner = TaskPlanner(zephyr_controller, sensor_manager, uav_name)
 
@@ -34,6 +36,7 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         # air_manager.step()
         # comm_manager.step()
+        terrorist_detector.step()
         task_planner.step()
 
         # share the latest pose of the uav with other uavs

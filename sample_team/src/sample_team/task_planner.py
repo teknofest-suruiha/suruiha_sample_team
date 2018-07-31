@@ -14,7 +14,7 @@ class TaskPlanner:
         self.status = TAKEOFF
 
         self.waypoint_counter = 0
-        self.way_points = [[0, 500, 50]]
+        self.way_points = [[300, 300, 50], [-300, 300, 50], [-300, -300, 50]]
 
     def step(self):
         if self.status == TAKEOFF:
