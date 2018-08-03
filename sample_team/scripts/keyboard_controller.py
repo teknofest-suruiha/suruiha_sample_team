@@ -25,16 +25,11 @@ if __name__ == "__main__":
     uav_name = rospy.get_param('~name')
 
     # connect to air traffic controller
-    rospy.logdebug('waiting for /air_traffic_control service')
-    rospy.wait_for_service('/air_traffic_control')
-    rospy.logdebug('/air_traffic_control service is ready')
-    air_traffic_service = rospy.ServiceProxy('/air_traffic_control', AirTraffic)
-    air_manager = AirTrafficManager(air_traffic_service, uav_name)
+    air_manager = AirTrafficManager(uav_name)
 
-    pose_topic_name = rospy.get_param('~pose')
-    control_topic_name = rospy.get_param('~control')
+    pose_topic_name = uav_name + '_pose'
+    control_topic_name = uav_name + '_control'
 
-    rospy.logdebug("topic names are set as pose_topic_name:" + pose_topic_name + " control_topic_name:" + control_topic_name)
     control_pub = rospy.Publisher(control_topic_name, Twist, queue_size=1)
 
     throttle = 0.0
