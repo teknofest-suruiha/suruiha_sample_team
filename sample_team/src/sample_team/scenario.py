@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import rospy
 
 num_uavs = 0

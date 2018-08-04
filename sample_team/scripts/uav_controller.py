@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import roslib
 
 roslib.load_manifest('sample_team')
@@ -16,11 +18,11 @@ import sample_team.scenario as scenario
 
 
 if __name__ == "__main__":
-    rospy.init_node('uav_controller', anonymous=True)
+    rospy.init_node('uav_controller')
     uav_index = int(sys.argv[1])
     scenario.get_scenario_params()
 
-    # ornek takim kodu icin tek indeks sayısı icin iris cift sayısı icin zephyr modeli seciliyo
+    # ornek takim kodu icin tek indeks sayisi icin iris cift sayisi icin zephyr modeli seciliyo
     uav_name = 'iris' + str(uav_index)
     if uav_index % 2 == 0:
         uav_name = 'zephyr' + str(uav_index)
@@ -34,7 +36,7 @@ if __name__ == "__main__":
         controller = IrisController(uav_name, air_manager)
 
     comm_manager = CommManager(uav_name, controller)
-    sensor_manager = SensorManager()
+    sensor_manager = SensorManager(uav_name)
     task_planner = TaskPlanner(controller, uav_name)
     terrorist_detector = TerroristDetector(sensor_manager)
     score_manager = ScoreManager()
