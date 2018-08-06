@@ -14,6 +14,7 @@ from sample_team.task_planner import TaskPlanner
 from sample_team.comm_manager import CommManager
 from sample_team.sensor_manager import SensorManager
 from sample_team.score_manager import ScoreManager
+from sample_team.battery_manager import BatteryManager
 import sample_team.scenario as scenario
 
 
@@ -40,11 +41,13 @@ if __name__ == "__main__":
     task_planner = TaskPlanner(controller, uav_name)
     terrorist_detector = TerroristDetector(sensor_manager)
     score_manager = ScoreManager()
+    battery_manager = BatteryManager(uav_name)
 
     # how many times in a second the control loop is going to run
     ros_rate = rospy.Rate(20)
     while not rospy.is_shutdown():
         score_manager.step()
+        battery_manager.step()
         terrorist_detector.step()
         task_planner.step()
         # share the latest pose of the uav with other uavs
